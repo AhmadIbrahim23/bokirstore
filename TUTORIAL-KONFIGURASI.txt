@@ -1,0 +1,169 @@
+1.pastikan sudah mempunyai domain hosting rekomendasi ( domainesia.com opsional)
+2.versi PHP 7.4 
+3.buat database / username / password di cpanel hosting kalian
+4.upload file database yang ada di folder DB script database.sql
+
+
+
+langkah-lngkah instalasi :
+
+5.buka file config.php lalu edit:
+
+$host = "localhost";
+$dbname = "sakurupi_ppob"; // ganti dengan nama database kamu
+$username = "sakurupi_ppob"; // ganti sesuai username database
+$password = "sakurupi_ppob"; // ganti sesuai passowrd database
+
+$web_url = "https://sakurupiah.my.id"; // ganti dengan domain kamu
+
+
+Konfigurasi API pastikan alamat IPV4 atau IPV6 server hosting kamu sudah di daftarkan di api games untuk menu cek regional ML https://apigames.id 
+
+// ganti merchant id apigames kamu
+1.$merchant_id_apiGames = "M2311XXXXXXXXX";
+// ganti signature apigames kamu
+2.$signature_apiGames   = "71490fcd018ebafaxxxxxx"; 
+
+// 🔐 Token akses url ganti dengan buat token rahasia kamu jangan berika ke public untuk akses url seperti webhook digiflazz dan callback payment gateway
+
+//contoh penggunaan webhook digiflazz:
+https://domainkamu.com/callback-digiflazz.php?token=topupxxxxxxxxxx
+
+//untuk payment gateway sakurupiah tidak perlu di seeting karna sudah otomatis menyesuikan callback dengan server hosting domain kalian
+
+
+$secret = "topupxxxxxxxxxx"; //ini token yang akan di pakai nanti untuk akses url
+
+
+//ganti dengan buat token rahasia kamu bebas sivatnya privat uktuk akses url agar setiap data ter enkripsi menjaga keamanan data pengguna.
+catatan: jika web sudah di jalankan jangan ganti SECRET_KEY dan SECRET_IV supaya setiap url yang di akses tidak error
+
+define('SECRET_KEY', 'SAKXXXXXXX');
+define('SECRET_IV', 'UFH98353XXXXXXXX');
+
+
+6.INTEGRASI DIGIFLAZZ
+- buka database pada tabel ( provider )
+- biarkan nama tetap ( digiflazz )
+- edit username dan api_key production digiflazz kamu
+- status ( active )
+
+7.INTEGRASI PAYMENT GATEWAY SAKURUPIAH https://sakurupiah.id
+- pastikan IPV4 dan IPV6 kamu sudah di setting di akun merchant sakurupiah kamu atau jika lebih dari satu ip sesuaikan saja di akun sakurupiah kamu
+- buka database payment_gateway lalu edit
+- kode biarkan tetap ( sakurupiah )
+- api_id ubah APIID sakurupiah kamu
+- api_key ubah APIKEY sakurupiah kamu
+
+
+
+8.SETING PROFIT LAYANAN DIGIFLAZZ
+- buka database setting_profit lalu edit
+- profit_jual dan tipe_jual sesuaikan dengan profit yang ingin di inginkan jika ingin persentase ubah ke Percent atau sebaliknya 
+- profit_diskon dan tipe_diskon sama sesuaikan . ini untuk defoult jika ingin custom nanti bisa edit custom sesui layanan dan tidak akan otomatis ON . jika ingin mengaktikan diskon kamu perlu ganti tipe_diskon On di database ( layanan ) dan atur harga diskon jika dirasa kurang atau ingin custom lagi harga diskonya . 
+- profit_reseller dan tipe_reseller juga sama sesuikan harga khusus untuk users yang daftar dengan level tertentu ini dapat di seting saja karna masih maintenance jadi tidak di gunakan di halaman asli nya. untuk update ke depan jadi saya menambah data ini namun saat ini belum bisa di gunakan langsung
+
+9.SETTING LOGO WEB
+- buka database web_logo ubah url logo favicon, header, footer sesuai dengan logo anda bisa di pasang langsung file logonya di project file sesuaikan aja pathnya dan pastikan url itu alamat langsung ke logonya  contoh: https://urlpath.com/logo,png  
+
+10.UBAH NAMAE WEB DLL
+- buka database meta_data edit
+- sesuikan saja nama dan informasi dengan data kalian
+
+11.BANNER SLIDER 
+- buka database banner ubah saja dengan url banner kalian
+
+12.BLOG
+- untuk membuat blog img nya di upload di bagaian public_html/blog/img/ disini. atau sesuikan nama root filenya namun upload harus di dalam folder ( /blog/img/ ) 
+- buka database banner isi judul dan konten yang ingin anda buat dan logo langsung nama file logonya contoh logo.png pastikan sudah di upload di dalam folder ( /blog/img/ ) 
+
+
+13.CRONSJOB 
+jalankan cronjob di web hosting kalian
+
+
+- php -q /home/pathkamu/public_html/sistem/get_payment_gateway.php?token=topupxxxxxxxxxx
+- php -q /home/pathkamu/public_html/sistem/sync_digiflazz.php?token=topupxxxxxxxxxx
+
+Catatan : jangan ubah database metode_pembayaran jalankan saja cronsjobnya . cronjob ini berfungsi mengambil data layanan pembayaran payment gateway sakurupiah jika ada yang tidak aktif maka akan otomatis off dan on jadi gak perlu setting manual
+
+Catatan 2: untuk cronsjob ambil layanan digiflazz sync_digiflazz.php atau bisa di akses langsung menggunakan path contoh: https://domainkamu.com//sistem/sync_digiflazz.php?token=topupxxxxxxxxxx
+
+// FUNGSI DETAIL CRONSJOB sync_digiflazz.ph
+- fungsi cronjob ini mengambil layanan dan meng update layanan sesuai harga profit yang sudah di setting sebelumnya di database setting_profit.
+
+- jika ada diskon aktif dan waktu expired diskon masih berlaku maka tidak mengubah diskon harga dll.
+- jika diskon aktif namun harga diskon lebih rendah dari harga produk asli digiflazz maka diskon otomatis Off dan kembali ke harga normla sesuai profit yang sebelumnya di seting . hal ini mencegah kerugian yang tidak terduga jika harga produk digiflazz naik diskon sedang berjalan. 
+
+- jika diskon on expired diskon sudah kadaluarsa maka otomatis di ubah status diskon Of dan menampilkan harga seperi harga jual biasa. 
+- jika ada layanan produk baru maka otomatis insert sesuai harga yang sudah di seting. 
+
+14.TAMBAHAN
+- jika orderan user yang login transaksi pembelian gagal/error saldo sudah otomatis langsung kembali ke saldo akun meskipun pembyaran bukan memakai saldo akun jika memakai QRIS dll maka refund di masukan ke saldo akun
+- untuk kelola data pembelian dan transaksi langsung gunakan dashbord payment gateway sakurupiah saja kamu bisa melihat detail pembelian user kalian dan data lainnya.
+-
+
+15.SEO WEBSITE
+- ubah file robots.txt dan sitemap.xml sesuikan dengan url web kamu dan url logonya
+- manifest.json ubah juga sesuai nama web kamu dan url logonya rekomendasi logo ukuran 50x50 pixel
+- service-worker.js ubah url domain dan logo sesui url web kamu
+
+
+VERSI V7 : PHP NATIVE by:agus riyanto
+
+kalau ada kendala silahkan hub: WA 083191910986. 
+
+SEMOGA SUKSES YA TOLONG JANGAN DI PERJUALAN BELIKAN SCRIPTNYA TANPA SESIZIN ANE YA. GAK BERKAH NANTI WKWKWKWKWK. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
